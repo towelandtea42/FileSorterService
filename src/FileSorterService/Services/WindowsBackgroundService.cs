@@ -2,16 +2,20 @@ using FileSorterService.Services.Abstract;
 
 namespace FileSorterService.Services;
 
-public class WorkerService : BackgroundService
+public class WindowsBackgroundService : BackgroundService
 {
-    private readonly ILogger<WorkerService> _logger;
-    private readonly IFileSortingService _sortingService;
+    private readonly ILogger<WindowsBackgroundService> _logger;
+    //private readonly IFileSortingService _sortingService;
+    private readonly IServiceScopeFactory _scopeFactory;
     private readonly IConfigurationSection _configSection;
 
-    public WorkerService(ILogger<WorkerService> logger, IFileSortingService service, IConfiguration config)
+    public WindowsBackgroundService
+        (ILogger<WindowsBackgroundService> logger, 
+        IServiceScopeFactory scopeFactory, 
+        IConfiguration config)
     {
         _logger = logger;
-        _sortingService = service;
+        _scopeFactory = scopeFactory;
         _configSection = config.GetRequiredSection("TimeSpanParameters");
     }
 
@@ -24,9 +28,11 @@ public class WorkerService : BackgroundService
             while (!stoppingToken.IsCancellationRequested)
             {
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                _sortingService.SortFiles();
+                using var scope = _scopeFactory.CreateScope();
+                var sortingService = scope.ServiceProvider.GetService<IFileSortingService>();
+                sortingService!.SortFiles();
+                scope.Dispose();
                 Thread.Sleep(sleepTime);
-                _sortingService.Refresh();
             }
         }
         catch (Exception ex)

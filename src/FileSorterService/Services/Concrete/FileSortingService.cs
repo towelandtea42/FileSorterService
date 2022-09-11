@@ -3,8 +3,8 @@
 namespace FileSorterService.Services.Concrete;
 public class FileSortingService : IFileSortingService
 {
-    private DirectoryInfo _directory;
-    private List<FileInfo> _files;
+    private readonly DirectoryInfo _directory;
+    private readonly List<FileInfo> _files;
     private readonly IConfigurationSection _configSection;
     private readonly IFilterService _filter;
 
@@ -25,14 +25,6 @@ public class FileSortingService : IFileSortingService
         }
     }
     
-    public void Refresh()
-    {
-        _filter.Refresh();
-        _directory = GetDirectoryInfo();
-        _files.Clear();
-        _files = _directory.GetFiles().ToList();
-    }
-
     private void TryMove(FileInfo file, string toPath)
     {
         if (!Directory.Exists(toPath))

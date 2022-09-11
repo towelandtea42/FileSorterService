@@ -1,6 +1,6 @@
 ﻿namespace FileSorterService.Services.Abstract;
 
-public interface IFileSortingService : IUpdate
+public interface IFileSortingService
 {
     void SortFiles();
 }

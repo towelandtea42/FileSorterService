@@ -13,9 +13,9 @@ IHost host = Host.CreateDefaultBuilder(args)
     {
         LoggerProviderOptions.RegisterProviderOptions<
             EventLogSettings, EventLogLoggerProvider>(services);
-        services.AddHostedService<WorkerService>();
-        services.AddSingleton<IFilterService, FilterService>();
-        services.AddSingleton<IFileSortingService, FileSortingService>();
+        services.AddHostedService<WindowsBackgroundService>();
+        services.AddTransient<IFilterService, FilterService>();
+        services.AddTransient<IFileSortingService, FileSortingService>();
     })
     .ConfigureLogging((context, logging) =>
     {
@@ -29,8 +29,10 @@ try
 {
     await host.RunAsync();
 }
-catch
+catch(Exception ex)
 {
     //log
+    var logger = host.Services.GetRequiredService<ILogger<Program>>();
+    logger.LogError(ex, ex.Message);
     Environment.Exit(1);
 }

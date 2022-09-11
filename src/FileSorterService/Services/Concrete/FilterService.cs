@@ -6,7 +6,7 @@ namespace FileSorterService.Services.Concrete;
 public class FilterService : IFilterService
 {
     private readonly IConfigurationSection _configSection;
-    private List<FileFilter> _filters;
+    private readonly List<FileFilter> _filters;
     private readonly ILogger<FilterService> _logger;
 
     public FilterService(IConfiguration config, ILogger<FilterService> logger)
@@ -30,12 +30,6 @@ public class FilterService : IFilterService
         }
         ToPath = String.Empty;
         return false;
-    }
-
-    public void Refresh()
-    {
-        _filters.Clear();
-        _filters = GetFilters();
     }
 
     /// <summary>
